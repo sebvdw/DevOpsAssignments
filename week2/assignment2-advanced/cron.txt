@@ -1,0 +1,13 @@
+To run this script on a daily basis, you can set up a cron job by following these steps:
+
+Open the crontab editor by running the following command in the terminal:
+
+bash
+Copy code
+crontab -e
+This will open the crontab file in the default editor (which is usually nano). Add the following line at the end of the file:
+
+bash
+Copy code
+0 0 * * * /bin/bash /path/to/your/script.sh
+This line specifies that the script should run at 12:00 am (midnigh

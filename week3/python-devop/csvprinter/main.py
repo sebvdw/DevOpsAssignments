@@ -2,7 +2,7 @@ import csv
 
 def read_csv():
     result = []
-    with open('film_actors.csv', mode ='r')as file:
+    with open('/builds/seb_vdw/ci-test/python-devop/csvprinter/film_actors.csv', mode ='r')as file:
         reader = csv.reader(file, delimiter=';')
         header = []
         for line in reader:
@@ -15,14 +15,12 @@ def read_csv():
                 result.append(item)
     return result
 
-
 def search(list, keyword):
     result = []
     for item in list:
         if keyword in item['actor_name']:
             result.append(item)
     return result
-
 
 def transform(list):
     result = {}
@@ -37,7 +35,6 @@ def create_graph(data):
     with open('chart.txt', 'w') as file:
         for name, count in data.items():
             file.write(f"{name:30} {'='*count}\n")
-
 
 def main():
     film_actors = read_csv()

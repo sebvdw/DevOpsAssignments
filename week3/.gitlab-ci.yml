@@ -1,0 +1,81 @@
+default:
+  image: python:3.11
+
+before_script:
+  - cd python-devop
+  - pip install poetry
+  - poetry install
+  - source `poetry env info --path`/bin/activate
+  - pip install pytest
+
+# stages:
+#   - test
+#   - build
+
+# testing:
+#   stage: test
+#   script:
+#     - echo "This is the test stage and a merge"
+#     - cd tests
+#     - python -m unittest -v
+#     - python -m pytest --junitxml=report.xml
+#   artifacts:
+#     paths:
+#       - /builds/seb_vdw/ci-test/python-devop/chart.txt
+#     expire_in: 1 week
+#   # artifacts:
+#   #   reports:
+#   #     junit: /builds/seb_vdw/ci-test/python-devop/tests/chart.xml
+#   rules:
+#   - if: '$CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_EVENT_TYPE == "merged"'
+
+# building:
+#   stage: build
+#   script:
+#     - echo "This is the build stage"
+#     - poetry config repositories.gitlab "https://gitlab.com/api/v4/projects/44136407/packages/pypi"
+#     - poetry config http-basic.gitlab gitlab-ci-token "glpat-bSBhYzKHmjLmpiJWFHWF"
+#     - echo "Repository gitlab configured ..."
+#     - poetry build
+#     - echo "Build done ..."
+#     # - poetry publish --repository gitlab
+#     # - echo "Publishing done!"
+      
+
+stages:
+  - build
+  - test
+  - deploy
+
+build:
+  stage: build
+  script:
+    - echo "This is the build stage"
+    - poetry config repositories.gitlab "https://gitlab.com/api/v4/projects/44136407/packages/pypi"
+    - poetry config http-basic.gitlab gitlab-ci-token "glpat-bSBhYzKHmjLmpiJWFHWF"
+    - echo "Repository gitlab configured ..."
+    - poetry build
+
+test:
+  stage: test
+  script:
+    - echo "This is the test stage and a merge"
+    - cd tests
+    - python -m unittest -v
+    - python -m pytest --junitxml=report.xml
+  artifacts:
+    paths:
+      - /builds/seb_vdw/ci-test/python-devop/chart.txt
+    expire_in: 1 week
+  rules:
+    - if: '$CI_MERGE_REQUEST_ID'
+      when: always
+
+deploy:
+  stage: deploy
+  script:
+    - echo "Deploying the application"
+    - poetry publish --repository gitlab
+    - echo "Publishing done!"
+  when: manual  
+    
